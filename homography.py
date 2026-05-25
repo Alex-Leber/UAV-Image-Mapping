@@ -60,9 +60,10 @@ img = load_image("test1.jpg")
 K = calibration.calib_mtx()
 rotated_img = unrotate_image(img, [0,0,0,0,-0.1,-1], K)
 
-# cv2.imshow("img", rotated_img)
-# cv2.waitKey(0)
-# cv2.destroyAllWindows()
+# test image
+cv2.imshow("img", rotated_img)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
 
 
 
