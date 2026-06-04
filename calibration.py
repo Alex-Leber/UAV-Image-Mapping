@@ -14,8 +14,8 @@ def calib_mtx():
     objp[:,:2] *= square_size
 
     # Arrays to store object points and image points from all the images.
-    objpoints = [] # 3d point in real world space
     imgpoints = [] # 2d points in image plane.
+    objpoints = [] # 3d point in real world space
 
     images = glob.glob('chessboard2.jpg')
 
@@ -33,12 +33,6 @@ def calib_mtx():
 
             corners2 = cv.cornerSubPix(gray,corners, (11,11), (-1,-1), criteria)
             imgpoints.append(corners2)
-
-            # # Draw and display the corners
-            # cv.drawChessboardCorners(img, (8,6), corners2, ret)
-            # cv.imshow('img', img)
-            # cv.waitKey(0)
-    # cv.destroyAllWindows()
 
     ret, K, dist, rvecs, tvecs = cv.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
     return K
