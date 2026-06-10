@@ -2,12 +2,23 @@ import numpy as np
 import cv2
 import calibration
 
-def inverse_rotation_homography(pose, K):
+def get_attitude(pose):
+    # read IMU telemetry here
     # pose = [x,y,z,Y,P,R] orientation from the IMU/GP drone metadata. Angles in radians
-    # K = camera intrinsics calculated from chessboard image in calibration.py
+
     Y = pose[3] # yaw (z)
     P = pose[4] # pitch (y)
     R = pose[5] # roll (x)
+
+    attitude = [Y,P,R]
+    return attitude
+
+def inverse_rotation_homography(attitude, K):
+    # K = camera intrinsics calculated from chessboard image in calibration.py 
+    
+    Y = attitude[0]
+    P = attitude[1]
+    R = attitude[2]
 
     Rx = np.array([[1,         0,            0],
                    [0, np.cos(R), -1*np.sin(R)],
@@ -28,7 +39,8 @@ def inverse_rotation_homography(pose, K):
 
 def unrotate_image(img, pose, K):
 
-    H = inverse_rotation_homography(pose, K)
+    attitude = get_attitude(pose)
+    H = inverse_rotation_homography(attitude, K)
     h, w = img.shape[:2]
     
     corners = np.float32([[[0,0]], [[0,h]], [[w,h]], [[w,0]]])
@@ -56,6 +68,7 @@ def load_image(path):
         raise FileNotFoundError(f"Couldn't load file {path}")
     return img
 
+# Testing code below
 img = load_image("test1.jpg")
 K = calibration.calib_mtx()
 rotated_img = unrotate_image(img, [0,0,0,0,-0.1,-1], K)
